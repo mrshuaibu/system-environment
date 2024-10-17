@@ -1,6 +1,5 @@
 'use strict';
 
-// Using utility functions
 function select(selector, scope = document) {
     return scope.querySelector(selector);
 }
@@ -19,30 +18,44 @@ const whatBrowser = select('.what-browser');
 function getSystemInfo() {
     const userAgent = navigator.userAgent;
 
-    const osMap = {
-        'Windows NT': 'Windows',
-        'Mac OS X': 'MacOS',
-        'Linux': 'Linux',
-        'Android': 'Android',
-        'like Mac OS X': 'iOS'
-    };
-
-    const osName = Object.keys(osMap).find(key => userAgent.includes(key)) || 'Unknown OS';
+    let osName = 'Unknown OS';
+    switch (true) {
+        case userAgent.includes('Windows NT'):
+            osName = 'Windows';
+            break;
+        case userAgent.includes('Mac OS X'):
+            osName = 'MacOS';
+            break;
+        case userAgent.includes('Linux'):
+            osName = 'Linux';
+            break;
+        case userAgent.includes('Android'):
+            osName = 'Android';
+            break;
+        case userAgent.includes('like Mac OS X'):
+            osName = 'iOS';
+            break;
+    }
     osElement.innerText = `OS: ${osName}`;
 
     const language = navigator.language || navigator.userLanguage;
     whatLanguage.innerText = `Language: ${language}`;
 
-    const browserMap = {
-        'Chrome': 'Chrome',
-        'Firefox': 'Firefox',
-        'Edg': 'Edge',
-        'Safari': 'Safari'
-    };
-
-    const browserName = Object.keys(browserMap).find(key => 
-        userAgent.includes(key) && !(key === 'Safari' && userAgent.includes('Chrome'))
-    ) || 'Unknown Browser';
+    let browserName = 'Unknown Browser';
+    switch (true) {
+        case userAgent.includes('Chrome') && !userAgent.includes('Edg'):
+            browserName = 'Chrome';
+            break;
+        case userAgent.includes('Firefox'):
+            browserName = 'Firefox';
+            break;
+        case userAgent.includes('Edg'):
+            browserName = 'Edge';
+            break;
+        case userAgent.includes('Safari') && !userAgent.includes('Chrome'):
+            browserName = 'Safari';
+            break;
+    }
     whatBrowser.innerText = `Browser: ${browserName}`;
 }
 
@@ -62,7 +75,6 @@ function updateWindowInfo() {
     pageWidth.innerText = `Width: ${width}px`;
     pageHeight.innerText = `Height: ${height}px`;
 
-    // Determine orientation
     const orientationMap = {
         true: 'Landscape',
         false: 'Portrait'
@@ -72,7 +84,6 @@ function updateWindowInfo() {
     orientationElement.innerText = `Orientation: ${orientation}`;
 }
 
-// Call the function on load and resize
 listen('load', window, updateWindowInfo);
 listen('resize', window, updateWindowInfo);
 
@@ -108,7 +119,6 @@ listen('load', window, getBatteryInfo);
 
 const onlineStatusElement = select('.button');
 
-// Status map
 const statusMap = {
     true: 'ONLINE',
     false: 'OFFLINE'
